@@ -2,4 +2,37 @@
     <string name="app_name">UVCE</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string-array name="branch">
+        <item>CSE(Comp. Science)</item>
+        <item>ISE(Info. Science)</item>
+        <item>ECE(Electronics &amp; Communication)</item>
+        <item>EEE(Electrical &amp; Electronics)</item>
+        <item>ME(Mechanical)</item>
+        <item>CE(Civil)</item>
+    </string-array>
+    <string-array name="type_of_content">
+        <item>syllabus</item>
+        <item>scheme</item>
+        <item>lab manual</item>
+    </string-array>
+    <string-array name="semester">
+        <item>1 &amp; 2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="lab_manual">
+        <item>C#</item>
+        <item>COMPUTER GRAPHICS</item>
+        <item>COMPUTER NETWORKS</item>
+        <item>DATA STRUCTURES</item>
+        <item>DBMS</item>
+        <item>IP</item>
+        <item>JAVA</item>
+        <item>LEX AND YACC</item>
+        <item>UNIX SHELL SCRIPTS</item>
+    </string-array>
 </resources>
