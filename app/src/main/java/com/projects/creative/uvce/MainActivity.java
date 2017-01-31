@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 return MainActivity.PlaceholderFragment.newInstance(position + 1);
             else
                 Log.d("MAIN ACTIVITY","Creating HomeFragment");
-                return HomeFragment.newInstance(position + 1);
+                return FavFragment.newInstance(position + 1);
         }
 
         @Override
