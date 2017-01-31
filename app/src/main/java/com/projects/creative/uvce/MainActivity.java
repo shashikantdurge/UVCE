@@ -1,5 +1,6 @@
 package com.projects.creative.uvce;
 
+import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,12 +12,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
+    public static Spinner branchSpn,semLabSpn,subjectSpn,syllabusSpn;
+    public static int syllabusPos=0;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -89,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
          * The fragment argument representing the section number for this
          * fragment.
          */
+        ArrayAdapter<CharSequence> sem_labAdapter,subjectAdapter;
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
@@ -106,13 +114,97 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
+        public void initialize(View rootView){
+            branchSpn=(Spinner)rootView.findViewById(R.id.branch_spinner);
+            semLabSpn=(Spinner)rootView.findViewById(R.id.sem_lab_spinner);
+            subjectSpn=(Spinner)rootView.findViewById(R.id.subjects_spinner);
+            syllabusSpn=(Spinner)rootView.findViewById(R.id.syllabus_spinner);
+            sem_labAdapter=ArrayAdapter.createFromResource(rootView.getContext(),R.array.semester,android.R.layout.simple_spinner_dropdown_item);
+            subjectAdapter=ArrayAdapter.createFromResource(rootView.getContext(),R.array.all1,android.R.layout.simple_list_item_1);
+            semLabSpn.setAdapter(sem_labAdapter);
+            subjectSpn.setAdapter(subjectAdapter);
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+            initialize(rootView);
+            Log.d("PlaceHolDer","I'm in onViewCreated");
+            branchSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    setSubjects(rootView.getContext());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            semLabSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        setSubjects(rootView.getContext());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            syllabusSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    syllabusPos=i;
+                    if(i==0){               //SYLLABUS
+                        subjectSpn.setEnabled(true);
+                        sem_labAdapter=ArrayAdapter.createFromResource(rootView.getContext(),R.array.semester,android.R.layout.simple_spinner_dropdown_item);
+                    }
+                    else if(i==1){          //SCHEME
+                        subjectSpn.setEnabled(false);
+                        sem_labAdapter=ArrayAdapter.createFromResource(rootView.getContext(),R.array.semester,android.R.layout.simple_spinner_dropdown_item);
+                    }
+                    else{                   //LAB MANUAL
+                        subjectSpn.setEnabled(false);
+                        sem_labAdapter=ArrayAdapter.createFromResource(rootView.getContext(),R.array.lab_manual,android.R.layout.simple_spinner_dropdown_item);
+                    }
+                    semLabSpn.setAdapter(sem_labAdapter);
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
             return rootView;
+        }
+
+        void setSubjects(Context context){
+            String resString;
+            Log.d("PlaceHolDer","setSubjects");
+            if(syllabusPos==0){
+                int sem=Integer.parseInt(semLabSpn.getSelectedItem().toString().substring(0,1));
+                if(sem==1){
+                    Log.d("PlaceHolDer","sem 1 selected "+sem);
+                    subjectAdapter=ArrayAdapter.createFromResource(context,getResourceId(context,"all1"),android.R.layout.simple_list_item_1);
+
+                }
+                else{
+                    Log.d("PlaceHolDer","sem other than 1 "+sem);
+                    resString=branchSpn.getSelectedItem().toString().toLowerCase().substring(0,2)+sem;
+                    subjectAdapter=ArrayAdapter.createFromResource(context,getResourceId(context,resString),android.R.layout.simple_list_item_1);
+                }
+                subjectSpn.setAdapter(subjectAdapter);
+            }
+
+        }
+
+        int getResourceId(Context context,String resString){
+            int resId=context.getResources().getIdentifier(resString,"array",context.getPackageName());
+            return resId;
         }
     }
 
@@ -130,7 +222,11 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            if(position==0)
+                return MainActivity.PlaceholderFragment.newInstance(position + 1);
+            else
+                Log.d("MAIN ACTIVITY","Creating HomeFragment");
+                return HomeFragment.newInstance(position + 1);
         }
 
         @Override

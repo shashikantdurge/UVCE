@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">UVCE</string>
     <string name="action_settings">Settings</string>
+    <string name="submit">SUBMIT</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string-array name="branch">
         <item>CSE(Comp. Science)</item>
