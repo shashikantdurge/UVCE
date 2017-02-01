@@ -1,6 +1,7 @@
 package com.projects.creative.uvce;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -35,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    public static String ARRAY="array",STRING="string";
 
-    public static Spinner branchSpn,semLabSpn,subjectSpn,syllabusSpn;
-    public static int syllabusPos=0;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -98,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
          */
         ArrayAdapter<CharSequence> sem_labAdapter,subjectAdapter;
         private static final String ARG_SECTION_NUMBER = "section_number";
+        Spinner branchSpn,semLabSpn,subjectSpn,syllabusSpn;
+        int syllabusPos=0,subjectPos=0;
+        Button submitBtn;
+        int sem;
 
         public PlaceholderFragment() {
         }
@@ -119,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             semLabSpn=(Spinner)rootView.findViewById(R.id.sem_lab_spinner);
             subjectSpn=(Spinner)rootView.findViewById(R.id.subjects_spinner);
             syllabusSpn=(Spinner)rootView.findViewById(R.id.syllabus_spinner);
+            submitBtn=(Button) rootView.findViewById(R.id.submitBtn);
             sem_labAdapter=ArrayAdapter.createFromResource(rootView.getContext(),R.array.semester,android.R.layout.simple_spinner_dropdown_item);
             subjectAdapter=ArrayAdapter.createFromResource(rootView.getContext(),R.array.all1,android.R.layout.simple_list_item_1);
             semLabSpn.setAdapter(sem_labAdapter);
@@ -179,6 +186,32 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+            submitBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int resId;
+                    if(syllabusPos==0){
+                        subjectPos=subjectSpn.getSelectedItemPosition();
+                        if(sem==1){
+                            resId=getResourceId(view.getContext(),"all1"+subjectSpn.getSelectedItemPosition(),STRING);
+                        }
+                        else{
+                            resId=getResourceId(view.getContext(),branchSpn.getSelectedItem().toString().toLowerCase().substring(0,2)+Integer.toString(sem)+Integer.toString(subjectPos),STRING);
+                        }
+                        Log.i("MAIN ACTIVITY","RESOURCE ID IS "+resId);
+                        Intent intent=new Intent(view.getContext(),ReadingActivity.class);
+                        intent.putExtra(ReadingActivity.SUBJECT_ID,resId);
+                        startActivity(intent);
+                    }
+                    else if(syllabusPos==1){
+
+                    }
+                    else{
+
+                    }
+                }
+            });
+
             return rootView;
         }
 
@@ -186,24 +219,25 @@ public class MainActivity extends AppCompatActivity {
             String resString;
             Log.d("PlaceHolDer","setSubjects");
             if(syllabusPos==0){
-                int sem=Integer.parseInt(semLabSpn.getSelectedItem().toString().substring(0,1));
+                sem=Integer.parseInt(semLabSpn.getSelectedItem().toString().substring(0,1));
                 if(sem==1){
                     Log.d("PlaceHolDer","sem 1 selected "+sem);
-                    subjectAdapter=ArrayAdapter.createFromResource(context,getResourceId(context,"all1"),android.R.layout.simple_list_item_1);
+                    subjectAdapter=ArrayAdapter.createFromResource(context,getResourceId(context,"all1",ARRAY),android.R.layout.simple_list_item_1);
 
                 }
                 else{
                     Log.d("PlaceHolDer","sem other than 1 "+sem);
                     resString=branchSpn.getSelectedItem().toString().toLowerCase().substring(0,2)+sem;
-                    subjectAdapter=ArrayAdapter.createFromResource(context,getResourceId(context,resString),android.R.layout.simple_list_item_1);
+                    subjectAdapter=ArrayAdapter.createFromResource(context,getResourceId(context,resString,ARRAY),android.R.layout.simple_list_item_1);
                 }
                 subjectSpn.setAdapter(subjectAdapter);
             }
 
         }
 
-        int getResourceId(Context context,String resString){
-            int resId=context.getResources().getIdentifier(resString,"array",context.getPackageName());
+        int getResourceId(Context context,String resString,String resType){
+            int resId=context.getResources().getIdentifier(resString,resType,context.getPackageName());
+            Log.i("GET_RESOURCE_ID","ID FOR "+resString+" is "+resId);
             return resId;
         }
     }
